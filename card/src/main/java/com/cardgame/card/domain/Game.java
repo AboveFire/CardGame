@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class Game {
 	private String id = "";
@@ -35,21 +34,42 @@ public class Game {
 		players.remove(pPlayer);
 	}
 	
-	public List<Player> getPlayerRank() {
-		List<Player> orderedPlayers = new ArrayList<>();
+	public Map<Player, Integer> getPlayerLeaderBoard() {
+		Map<Player, Integer> orderedPlayers = new HashMap<Player, Integer>();
 		
-		players.entrySet().stream().sorted((Entry<Player, List<Card>> o1, Entry<Player, List<Card>> o2) -> {
-			int total1 = 0;
-			int total2 = 0;
-			for(Card c : o1.getValue()) {
-				total1 += c.getNumber();
-			}
-			for(Card c : o2.getValue()) {
-				total2 += c.getNumber();
-			}
+		players.keySet().stream().sorted((Player p1, Player p2) -> {
+			int total1 = getPlayerValue(p1);
+			int total2 = getPlayerValue(p2);
 			return total1 - total2;
-		}).forEach(a -> orderedPlayers.add(a.getKey()));
+		}).forEach(a -> orderedPlayers.put(a, getPlayerValue(a)));
+		
 		return orderedPlayers;
+	}
+	
+	public int getPlayerValue(Player pPlayer) {
+		int count = 0;
+		for(Card c : players.get(pPlayer)) {
+			count += c.getNumber();
+		}
+		return count;
+	}
+	
+	public Map<Card.CardTypes, Integer> getCountPerSuit(){
+		Map<Card.CardTypes, Integer> map = new HashMap<Card.CardTypes, Integer>();
+		for(Card.CardTypes type : Card.CardTypes.values()) {
+			map.put(type, 0);
+		}
+		for (Card c : gameDeck.getCards()) {
+			map.put(c.getType(), map.get(c.getType()) + 1);
+		}
+		return map;
+	}
+	
+	public Map<Card, Integer> getCountPerCard(){
+		
+		
+		
+		return null;
 	}
 	
 	public void deal(Player pPlayer) {
@@ -62,6 +82,14 @@ public class Game {
 		for (int i = 0; i < number; i++) {
 			deal(pPlayer);
 		}
+	}
+	
+	public void shuffle() {
+		gameDeck.shuffle();
+	}
+	
+	public List<Card> getHand(Player pPlayer){
+		return players.get(pPlayer);
 	}
 	
 	@Override

@@ -2,11 +2,18 @@ package com.cardgame.card.domain;
 
 public class Card {
 	public enum CardTypes {
-		  HEART,
-		  SPADE,
-		  CLUB,
-		  DIAMOND
+		HEART("♥"),
+		SPADE("♠"),
+		CLUB("♣"),
+		DIAMOND("♦");
+		private final String symbol;
+		CardTypes(String pSymbol){
+			symbol = pSymbol;
 		}
+		public String getSymbol() {
+			return symbol;
+		}
+	}
 	public final static int MIN_NUMBER = 1;
 	public final static int MAX_NUMBER = 13;
 
@@ -40,5 +47,10 @@ public class Card {
 		}else {
 			throw new IllegalArgumentException();
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return type.getSymbol() + number;
 	}
 }

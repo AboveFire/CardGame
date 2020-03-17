@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +33,17 @@ public class DeckController {
 		
 		Map<String, String> response = new HashMap<>();
 		response.put("message", "Deck created with id : " + deck.getId());
+		return response;
+	}
+	
+	@PostMapping("/shuffle")
+	public Map<String, String> shuffleDeck(@RequestParam String deckId){
+		Deck deck = deckRepository.getDeck(deckId);
+		deck.shuffle();
+		deckRepository.updateDeck(deck);
+		
+		Map<String, String> response = new HashMap<>();
+		response.put("message", "Deck shuffled with id : " + deck.getId());
 		return response;
 	}
 }
