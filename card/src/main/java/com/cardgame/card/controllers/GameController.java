@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,6 +43,7 @@ private final IPlayerRepository playerRepository;
 	
 	@PostMapping("/adddeck")
 	public Map<String, String> addDeck(@RequestParam String gameId, @RequestParam String deckId){
+		//TODO Need error management
 		Game game = gameRepository.getGame(gameId);
 		Deck deck = deckRepository.getDeck(deckId);
 		game.addDeck(deck);
@@ -57,6 +56,7 @@ private final IPlayerRepository playerRepository;
 	
 	@PostMapping("/addplayer")
 	public Map<String, String> addPlayer(@RequestParam String gameId, @RequestParam String playerId){
+		//TODO Need error management
 		Game game = gameRepository.getGame(gameId);
 		Player player = playerRepository.getPlayer(playerId);
 		game.addPlayer(player);
@@ -64,11 +64,12 @@ private final IPlayerRepository playerRepository;
 		
 		Map<String, String> response = new HashMap<>();
 		response.put("message", "Player " + playerId + " added to game " + gameId);
-		return null;
+		return response;
 	}
 	
 	@DeleteMapping("/removeplayer")
 	public Map<String, String> removePlayer(@RequestParam String gameId, @RequestParam String playerId){
+		//TODO Need error management
 		Game game = gameRepository.getGame(gameId);
 		Player player = playerRepository.getPlayer(playerId);
 		game.removePlayer(player);
@@ -76,6 +77,6 @@ private final IPlayerRepository playerRepository;
 		
 		Map<String, String> response = new HashMap<>();
 		response.put("message", "Player " + playerId + " removed from game " + gameId);
-		return null;
+		return response;
 	}
 }
