@@ -5,16 +5,22 @@ import java.util.Collections;
 import java.util.List;
 
 public class Game {
-	private Deck deck;
+	private String id = "";
+	private Deck gameDeck;
 	private List<Player> players;
 	
-	public Game() {
-		deck = new Deck(true);
+	public Game(Deck pDeck, String pId) {
+		id = pId;
+		gameDeck = pDeck;
 		players = new ArrayList<Player>();
 	}
 	
-	public void addDeck() {
-		deck.add(new Deck());
+	public String getId() {
+		return id;
+	}
+	
+	public void addDeck(Deck pDeck) {
+		gameDeck.add(pDeck);
 	}
 	
 	public void addPlayer(Player pPlayer) {
@@ -27,10 +33,6 @@ public class Game {
 		players.remove(pPlayer);
 	}
 	
-	public void removePlayer(String pPlayerName) {
-		removePlayer(new Player(pPlayerName));
-	}
-	
 	public List<Player> getPlayerRank() {
 		List<Player> orderedPlayers = new ArrayList<>();
 		Collections.copy(players, orderedPlayers);
@@ -40,8 +42,8 @@ public class Game {
 	}
 	
 	public void deal(Player pPlayer) {
-		if(!deck.isEmpty()) {
-			pPlayer.addCard(deck.draw());
+		if(!gameDeck.isEmpty()) {
+			pPlayer.addCard(gameDeck.draw());
 		}
 	}
 	
@@ -49,6 +51,18 @@ public class Game {
 		for (int i = 0; i < number; i++) {
 			deal(pPlayer);
 		}
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o instanceof Game) {
+			Game g = (Game) o;
+			return this.getId().equals(g.getId());
+			}
+		return false;
 	}
 	
 }

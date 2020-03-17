@@ -5,23 +5,26 @@ import java.util.Collections;
 import java.util.List;
 
 public class Deck {
+	private String id = "";
 	private List<Card> cards;
 	
-	public Deck() {
-		this(false);
+	public Deck(String pId) {
+		cards = new ArrayList<Card>();
+		id = pId;
 	}
 	
-	public Deck(boolean empty) {
-		cards = new ArrayList<Card>();
-		if (!empty) {
-			for (Card.CardTypes type : Card.CardTypes.values()) {
-				for (int i = Card.MIN_NUMBER; i <= Card.MAX_NUMBER; i++) {
-					add(new Card(type, i));
-				}
+	public void addAllCards() {
+		for (Card.CardTypes type : Card.CardTypes.values()) {
+			for (int i = Card.MIN_NUMBER; i <= Card.MAX_NUMBER; i++) {
+				add(new Card(type, i));
 			}
 		}
 	}
 	
+	public String getId() {
+		return id;
+	}
+
 	public void shuffle() {
 		//TODO NEED TO DO MY OWN
 		Collections.shuffle(cards);
@@ -63,6 +66,18 @@ public class Deck {
 			}
 		}
 		return count;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o instanceof Deck) {
+			Deck d = (Deck) o;
+			return this.getId().equals(d.getId());
+			}
+		return false;
 	}
 	
 }
