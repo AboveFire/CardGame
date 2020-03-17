@@ -3,6 +3,7 @@ package com.cardgame.card.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Deck {
 	private String id = "";
@@ -31,8 +32,13 @@ public class Deck {
 	}
 
 	public void shuffle() {
-		//TODO NEED TO DO MY OWN
-		Collections.shuffle(cards);
+		//Algorithme Fisher-Yates
+		for (int i = cards.size() - 1; i > 0; i--) {
+			int swap = ThreadLocalRandom.current().nextInt(0, i + 1);
+			Card cTemp = cards.get(i);
+			cards.set(i, cards.get(swap));
+			cards.set(swap, cTemp);
+		}
 	}
 	
 	public Card draw() {
