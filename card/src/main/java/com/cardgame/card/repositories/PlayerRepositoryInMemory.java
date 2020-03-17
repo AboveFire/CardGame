@@ -37,7 +37,7 @@ public class PlayerRepositoryInMemory implements IPlayerRepository{
 	}
 
 	@Override
-	public String getNextGameId() {
+	public String getNextPlayerId() {
 		return UUID.randomUUID().toString();
 	}
 }

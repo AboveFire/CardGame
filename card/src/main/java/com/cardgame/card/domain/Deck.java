@@ -8,6 +8,11 @@ public class Deck {
 	private String id = "";
 	private List<Card> cards;
 	
+	
+	public Deck() {
+		cards = new ArrayList<Card>();
+	}
+	
 	public Deck(String pId) {
 		cards = new ArrayList<Card>();
 		id = pId;
