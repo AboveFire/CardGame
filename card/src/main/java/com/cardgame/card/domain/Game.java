@@ -18,7 +18,7 @@ public class Game {
 	}
 	
 	public void addPlayer(Player pPlayer) {
-		if(pPlayer != null) {
+		if(pPlayer != null && !players.contains(pPlayer)) {
 			players.add(pPlayer);
 		}
 	}
@@ -37,6 +37,18 @@ public class Game {
 		Collections.sort(orderedPlayers);
 		
 		return orderedPlayers;
+	}
+	
+	public void deal(Player pPlayer) {
+		if(!deck.isEmpty()) {
+			pPlayer.addCard(deck.draw());
+		}
+	}
+	
+	public void deal(Player pPlayer, int number) {
+		for (int i = 0; i < number; i++) {
+			deal(pPlayer);
+		}
 	}
 	
 }

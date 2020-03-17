@@ -51,6 +51,10 @@ public class Deck {
 		return cards;
 	}
 	
+	public boolean isEmpty() {
+		return cards.size() == 0;
+	}
+	
 	public int countType(Card.CardTypes pType) {
 		int count = 0;
 		for (Card card : cards) {
