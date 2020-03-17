@@ -35,12 +35,12 @@ public class Deck {
 		}
 	}
 	
-	public void add(Card card) {
-		cards.add(card);
+	public void add(Card pCard) {
+		cards.add(pCard);
 	}
 	
-	public void add(Deck deck) {
-		cards.addAll(deck.getCards());
+	public void add(Deck pDeck) {
+		cards.addAll(pDeck.getCards());
 	}
 	
 	public void add(List<Card> pCards) {
@@ -51,13 +51,14 @@ public class Deck {
 		return cards;
 	}
 	
-	public int countType(Card.CardTypes type) {
+	public int countType(Card.CardTypes pType) {
 		int count = 0;
 		for (Card card : cards) {
-			if(card.getType() == type) {
+			if(card.getType() == pType) {
 				count++;
 			}
 		}
 		return count;
 	}
+	
 }

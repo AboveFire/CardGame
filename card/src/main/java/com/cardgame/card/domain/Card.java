@@ -13,18 +13,18 @@ public class Card {
 	private CardTypes type = null;
 	private int number = 0;
 	
-	public Card(CardTypes type, int number) {
-		setType(type);
-		setNumber(number);
+	public Card(CardTypes pType, int pNumber) {
+		setType(pType);
+		setNumber(pNumber);
 	}
 	
 	public CardTypes getType() {
 		return type;
 	}
 
-	private void setType(CardTypes type) {
-		if(type != null) {
-			this.type = type;
+	private void setType(CardTypes pType) {
+		if(pType != null) {
+			this.type = pType;
 		}else {
 			throw new IllegalArgumentException();
 		}
@@ -34,9 +34,9 @@ public class Card {
 		return number;
 	}
 
-	private void setNumber(int number) {
-		if(number >= MIN_NUMBER && number <= MAX_NUMBER ) {
-			this.number = number;
+	private void setNumber(int pNumber) {
+		if(pNumber >= MIN_NUMBER && pNumber <= MAX_NUMBER ) {
+			this.number = pNumber;
 		}else {
 			throw new IllegalArgumentException();
 		}
