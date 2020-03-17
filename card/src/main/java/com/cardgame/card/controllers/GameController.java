@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 
 import com.cardgame.card.domain.Card;
+import com.cardgame.card.domain.Card.CardTypes;
 import com.cardgame.card.domain.Deck;
 import com.cardgame.card.domain.Game;
 import com.cardgame.card.domain.Player;
@@ -169,7 +170,48 @@ private final IPlayerRepository playerRepository;
 		
 		Map<String, Object> response = new HashMap<>();
 		response.put("players", list);
-		return null;
+		return response;
+	}
+	
+	@PostMapping("/getcountpersuit")
+	public Map<String, Object> getCountPerSuit(@RequestParam String gameId) throws GameDoesNotExistException{
+		Game game = gameRepository.getGame(gameId);
+		if(game == null)
+			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+		
+		List<Map<String, Object>> list = new ArrayList<>();
+		
+		for(Entry<Card.CardTypes, Integer> e : game.getCountPerSuit().entrySet()) {
+			Map<String,Object> map = new HashMap<String, Object>();
+			map.put("type", e.getKey().toString());
+			map.put("count", e.getValue());
+			list.add(map);
+		}
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("types", list);
+		return response;
+	}
+	
+	@PostMapping("/getcountpercard")
+	public Map<String, Object> getCountPerCard(@RequestParam String gameId) throws GameDoesNotExistException{
+		Game game = gameRepository.getGame(gameId);
+		if(game == null)
+			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+		
+		List<Map<String, Object>> list = new ArrayList<>();
+		
+		for(Entry<Card, Integer> e : game.getCountPerCard().entrySet()) {
+			Map<String,Object> map = new HashMap<String, Object>();
+			map.put("type", e.getKey().getType().toString());
+			map.put("value", e.getKey().getNumber());
+			map.put("count", e.getValue());
+			list.add(map);
+		}
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("cards", list);
+		return response;
 	}
 	
 	@ExceptionHandler({ GameDoesNotExistException.class, DeckDoesNotExistException.class, PlayerDoesNotExistException.class })

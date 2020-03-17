@@ -66,10 +66,16 @@ public class Game {
 	}
 	
 	public Map<Card, Integer> getCountPerCard(){
-		
-		
-		
-		return null;
+		Map<Card, Integer> cardCounts = new HashMap<Card, Integer>();
+		for (Card.CardTypes type : Card.CardTypes.values()) {
+			for (int i = Card.MIN_NUMBER; i <= Card.MAX_NUMBER; i++) {
+				cardCounts.put(new Card(type, i), 0);
+			}
+		}
+		for(Card c : gameDeck.getCards()) {
+			cardCounts.put(c, cardCounts.get(c));
+		}
+		return cardCounts;
 	}
 	
 	public void deal(Player pPlayer) {
