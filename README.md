@@ -1,5 +1,5 @@
 # CardGame
-Basic Deck of Cards Game for LogMeIn
+Basic Deck of Cards Game
 
 **POST:**
 ```
