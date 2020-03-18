@@ -50,6 +50,23 @@ public class Card {
 	}
 	
 	@Override
+    public int hashCode() {
+        return getType().hashCode() + getNumber();
+    }
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o instanceof Card) {
+			Card c = (Card) o;
+			return this.getType().equals(c.getType()) && this.getNumber() == c.getNumber();
+		}
+		return false;
+	}
+	
+	@Override
 	public String toString() {
 		return type.getSymbol() + number;
 	}

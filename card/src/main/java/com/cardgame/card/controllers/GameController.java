@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 
 import com.cardgame.card.domain.Card;
-import com.cardgame.card.domain.Card.CardTypes;
 import com.cardgame.card.domain.Deck;
 import com.cardgame.card.domain.Game;
 import com.cardgame.card.domain.Player;
@@ -50,14 +50,26 @@ private final IPlayerRepository playerRepository;
 		return response;
 	}
 	
+	@DeleteMapping("/delete")
+	public Map<String, String> deleteGame(@RequestParam String gameId) throws GameDoesNotExistException{
+		Game game = gameRepository.getGame(gameId);
+		if(game == null)
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
+		gameRepository.removeGame(gameId);
+		
+		Map<String, String> response = new HashMap<>();
+		response.put("message", "Game deleted with id : " + game.getId());
+		return response;
+	}
+	
 	@PostMapping("/adddeck")
 	public Map<String, String> addDeck(@RequestParam String gameId, @RequestParam String deckId) throws GameDoesNotExistException, DeckDoesNotExistException{
 		Game game = gameRepository.getGame(gameId);
 		if(game == null)
-			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
 		Deck deck = deckRepository.getDeck(deckId);
 		if(deck == null)
-			throw new DeckDoesNotExistException("Deck " + deckId + "does not exist");
+			throw new DeckDoesNotExistException("Deck " + deckId + " does not exist");
 		game.addDeck(deck);
 		gameRepository.updateGame(game);
 		
@@ -70,10 +82,10 @@ private final IPlayerRepository playerRepository;
 	public Map<String, String> addPlayer(@RequestParam String gameId, @RequestParam String playerId) throws PlayerDoesNotExistException, GameDoesNotExistException{
 		Game game = gameRepository.getGame(gameId);
 		if(game == null)
-			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
 		Player player = playerRepository.getPlayer(playerId);
 		if(player == null)
-			throw new PlayerDoesNotExistException("Player " + playerId + "does not exist");
+			throw new PlayerDoesNotExistException("Player " + playerId + " does not exist");
 		game.addPlayer(player);
 		gameRepository.updateGame(game);
 		
@@ -86,10 +98,12 @@ private final IPlayerRepository playerRepository;
 	public Map<String, String> removePlayer(@RequestParam String gameId, @RequestParam String playerId) throws GameDoesNotExistException, PlayerDoesNotExistException{
 		Game game = gameRepository.getGame(gameId);
 		if(game == null)
-			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
 		Player player = playerRepository.getPlayer(playerId);
 		if(player == null)
-			throw new PlayerDoesNotExistException("Player " + playerId + "does not exist");
+			throw new PlayerDoesNotExistException("Player " + playerId + " does not exist");
+		if(!game.playerIsInGame(player))
+			throw new PlayerDoesNotExistException("Player " + playerId + " is not part of the game");
 		game.removePlayer(player);
 		gameRepository.updateGame(game);
 		
@@ -99,22 +113,24 @@ private final IPlayerRepository playerRepository;
 	}
 	
 	@PostMapping("/dealcards")
-	public Map<String, String> dealCards(@RequestParam String gameId, @RequestParam String playerId, @RequestParam(defaultValue="1") String pNumberDealt) throws PlayerDoesNotExistException, GameDoesNotExistException{
+	public Map<String, String> dealCards(@RequestParam String gameId, @RequestParam String playerId, @RequestParam(defaultValue="1") String numberDealt) throws PlayerDoesNotExistException, GameDoesNotExistException{
 		Game game = gameRepository.getGame(gameId);
 		if(game == null)
-			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
 		Player player = playerRepository.getPlayer(playerId);
 		if(player == null)
-			throw new PlayerDoesNotExistException("Player " + playerId + "does not exist");
+			throw new PlayerDoesNotExistException("Player " + playerId + " does not exist");
+		if(!game.playerIsInGame(player))
+			throw new PlayerDoesNotExistException("Player " + playerId + " is not part of the game");
 		int number = 1;
 		try {
-			number = Integer.parseInt(pNumberDealt);
+			number = Integer.parseInt(numberDealt);
 		}catch(Exception e) {}
-		game.deal(player, number);
+		int numberDrawn = game.deal(player, number);
 		gameRepository.updateGame(game);
 		
 		Map<String, String> response = new HashMap<>();
-		response.put("message", "Player " + playerId + " added to game " + gameId);
+		response.put("message", "Player " + playerId + " in game " + gameId + " given " + numberDrawn + " card(s)");
 		return response;
 	}
 	
@@ -122,7 +138,7 @@ private final IPlayerRepository playerRepository;
 	public Map<String, String> shuffle(@RequestParam String gameId) throws GameDoesNotExistException{
 		Game game = gameRepository.getGame(gameId);
 		if(game == null)
-			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
 		game.shuffle();
 		gameRepository.updateGame(game);
 		
@@ -131,15 +147,18 @@ private final IPlayerRepository playerRepository;
 		return response;
 	}
 	
-	@PostMapping("/gethand")
+	@GetMapping("/gethand")
 	public Map<String, Object> getHand(@RequestParam String gameId, @RequestParam String playerId) throws PlayerDoesNotExistException, GameDoesNotExistException{
 		Game game = gameRepository.getGame(gameId);
 		if(game == null)
-			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
 		Player player = playerRepository.getPlayer(playerId);
 		if(player == null)
-			throw new PlayerDoesNotExistException("Player " + playerId + "does not exist");
-
+			throw new PlayerDoesNotExistException("Player " + playerId + " does not exist");
+		if(!game.playerIsInGame(player))
+			throw new PlayerDoesNotExistException("Player " + playerId + " is not part of the game");
+		
+		
 		List<Map<String, Object>> list = new ArrayList<>();
 		for(Card card : game.getHand(player)) {
 			Map<String,Object> cardMap = new HashMap<String, Object>();
@@ -152,11 +171,11 @@ private final IPlayerRepository playerRepository;
 		return response;
 	}
 	
-	@PostMapping("/getplayers")
+	@GetMapping("/getplayers")
 	public Map<String, Object> getPlayers(@RequestParam String gameId) throws GameDoesNotExistException{
 		Game game = gameRepository.getGame(gameId);
 		if(game == null)
-			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
 		
 		List<Map<String, Object>> list = new ArrayList<>();
 		
@@ -173,11 +192,11 @@ private final IPlayerRepository playerRepository;
 		return response;
 	}
 	
-	@PostMapping("/getcountpersuit")
+	@GetMapping("/getcountpersuit")
 	public Map<String, Object> getCountPerSuit(@RequestParam String gameId) throws GameDoesNotExistException{
 		Game game = gameRepository.getGame(gameId);
 		if(game == null)
-			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
 		
 		List<Map<String, Object>> list = new ArrayList<>();
 		
@@ -193,11 +212,11 @@ private final IPlayerRepository playerRepository;
 		return response;
 	}
 	
-	@PostMapping("/getcountpercard")
+	@GetMapping("/getcountpercard")
 	public Map<String, Object> getCountPerCard(@RequestParam String gameId) throws GameDoesNotExistException{
 		Game game = gameRepository.getGame(gameId);
 		if(game == null)
-			throw new GameDoesNotExistException("Game " + gameId + "does not exist");
+			throw new GameDoesNotExistException("Game " + gameId + " does not exist");
 		
 		List<Map<String, Object>> list = new ArrayList<>();
 		
