@@ -47,6 +47,7 @@ private final IPlayerRepository playerRepository;
 		
 		Map<String, String> response = new HashMap<>();
 		response.put("message", "Game created with id : " + game.getId());
+		response.put("id", game.getId());
 		return response;
 	}
 	

@@ -34,6 +34,7 @@ public class DeckController {
 		
 		Map<String, String> response = new HashMap<>();
 		response.put("message", "Deck created with id : " + deck.getId());
+		response.put("id", deck.getId());
 		return response;
 	}
 	

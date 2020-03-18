@@ -31,6 +31,7 @@ public class PlayerController {
 			
 			Map<String, String> response = new HashMap<>();
 			response.put("message", "Player created with id : " + player.getId());
+			response.put("id", player.getId());
 			return response;
 		}
 }
