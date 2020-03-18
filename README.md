@@ -1,7 +1,8 @@
 # CardGame
 Basic Deck of Cards Game for LogMeIn
 
-POST:
+**POST:**
+```
 /player/create
   parameters : name (String)
   description : Create a player with defined name and returns the id in the json
@@ -30,8 +31,9 @@ POST:
 /game/shuffle
   parameters : gameId (String)
   description : Shuffle the game deck of a game with a specified id using Fisher–Yates shuffle algorithm
-
-DELETE:
+```
+**DELETE:**
+```
 /game/delete
   parameters : gameId (String)
   description : Delete the game with the specified id
@@ -39,8 +41,9 @@ DELETE:
   parameters : gameId (String)
   parameters : playerId (String)
   description : Remove player with a specified id from a game with a specified id
-
-GET:
+```
+**GET:**
+```
 /game/gethand
   parameters : gameId (String)
   parameters : playerId (String)
@@ -54,3 +57,4 @@ GET:
 /game/getcountpercard
   parameters : gameId (String)
   description : Get the number of each possible cards that are currently in the game deck of a specified game
+```
